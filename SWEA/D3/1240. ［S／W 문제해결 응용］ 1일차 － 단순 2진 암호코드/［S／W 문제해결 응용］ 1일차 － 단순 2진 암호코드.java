@@ -15,6 +15,7 @@ public class Solution {
 			
 			int[][] matrix = new int[N][M];
 			
+            // 암호 코드의 시작점을 찾기 위한 변수
 			boolean flag = true;
 			int startN = 0;
 			int startM = 0;
@@ -22,8 +23,10 @@ public class Solution {
 			for (int i = 0; i < N; i++) {
 				String[] line = br.readLine().split("");
 				for (int j = M-1; j >=0; j--) {
+                    // 각 자리의 숫자를 배열에 저장 (역순으로 처리)
 					matrix[i][j] = Integer.parseInt(line[j]);
 					
+                    // 첫 번째 1을 찾으면 그 위치를 기록하고, flag를 false로 설정하여 더 이상 찾지 않도록 함
 					if (matrix[i][j] == 1 && flag) {
 						startN = i;
 						startM = j;
@@ -31,7 +34,8 @@ public class Solution {
 					}
 				}
 			}
-			
+            
+			// 56비트 암호 코드 추출
 			int[] stringCode = new int[56];
 			int k = 0;
 			for (int j = startM - 56 + 1; j <= startM; j++) {
@@ -39,7 +43,7 @@ public class Solution {
 				k++;
 			}
 			
-			
+			// 암호 코드를 숫자 배열로 변환
 			int[] code = new int[8];
 			for (int i = 0; i < 8; i++) {
 				StringBuilder sb = new StringBuilder();
@@ -48,7 +52,8 @@ public class Solution {
 				}
 				
 				String segment = sb.toString();
-				
+                
+                // map에서 일치하는 숫자 찾기
 				for (int j = 0; j < 10; j++) {
 					if (segment.equals(map[j])) {
 						code[i] = j;
@@ -57,18 +62,19 @@ public class Solution {
 				}
 			}
 			
+            // 홀수 자리와 짝수 자리 숫자의 합을 계산
 			int even = 0;
 			int odd = 0;
 			for (int i = 0; i < 8; i++) {
 				if (i % 2 == 0) {
 					odd += code[i];
-				}
-				
-				else {
+				} 
+                else {
 					even += code[i];
 				}
 			}
 			
+            // (홀수자리 합 x 3) + 짝수자리 합이 10의 배수인지 체크
 			if ((odd*3 + even) % 10 == 0) {
 				System.out.println("#" + t + " " + (odd+even));
 			}
