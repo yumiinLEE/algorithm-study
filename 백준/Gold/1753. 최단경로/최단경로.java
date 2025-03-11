@@ -4,16 +4,17 @@ import java.util.*;
 public class Main {
 	
 	static class Edge implements Comparable<Edge> {
-		int vertex;  // 정점
-		int weight;  // 간선의 가중치
+		int vertex;
+		int weight;
 		
 		Edge(int vertex, int weight){
 			this.vertex = vertex;
 			this.weight = weight;
 		}
-		
+        
+		// 우선순위 큐에서 가중치가 작은 순으로 나오도록 비교
 	    public int compareTo(Edge other) {
-	        return Integer.compare(this.weight, other.weight);  // 가중치 기준으로 비교
+	        return Integer.compare(this.weight, other.weight);
 	    }
 	}
 
@@ -45,10 +46,9 @@ public class Main {
 			graph.get(v).add(new Edge(e, w));
 		}
 		
-		
-		// 다익스트라 알고리즘 수행
-		int dist[] = new int[V+1];  // 각 정점까지의 최단 거리 배열
-		Arrays.fill(dist, Integer.MAX_VALUE);   // 초기값을 무한대로 설정
+		// 최단 거리 배열
+		int dist[] = new int[V+1];
+		Arrays.fill(dist, Integer.MAX_VALUE);
 		
 		// 시작노드의 거리는 0
 		dist[start] = 0;
@@ -59,8 +59,8 @@ public class Main {
 		
 		while (!pq.isEmpty()) {
 			Edge current = pq.poll();
-			int cu = current.vertex;  // 현재 정점
-			int cDist = current.weight;  // 현재 정점까지의 거리
+			int cu = current.vertex;
+			int cDist = current.weight;
 			
 			// 이미 더 작은 거리가 계산된 경우는 처리할 필요 없음
             if (cDist > dist[cu]) {
