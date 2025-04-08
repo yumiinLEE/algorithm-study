@@ -1,89 +1,99 @@
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Deque;
+import java.util.StringTokenizer;
 
 public class Main {
+	static int[][] map;
+	static int head;
+	static int tail;
+	static int[] dx = {-1,0,1,0};//상우하좌
+	static int[] dy = {0,1,0,-1};
+	static int dIdx = 1;//방향 처음은 오른쪽
+	static int N;
+	static char[] directionList;
+	static int ans;
+	static Deque<int[]> dq = new ArrayDeque<int[]>();
+	public static void main(String[] args) throws NumberFormatException, IOException {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		StringTokenizer st ;
+		N = Integer.parseInt(br.readLine());
+		map = new int[N][N];
+		directionList = new char[100000];
+		int count = Integer.parseInt(br.readLine());
+		for(int i = 0 ; i < count;i++) {
+			st = new StringTokenizer(br.readLine());
+			int tempX = Integer.parseInt(st.nextToken());
+			int tempY = Integer.parseInt(st.nextToken());
+			map[tempX-1][tempY-1] =1; //1은 사과
+		}
+		//맵 초기화 완료
+		
+		count = Integer.parseInt(br.readLine());
+		for(int i = 0 ; i < count;i++) {
+			st = new StringTokenizer(br.readLine());
+			int second = Integer.parseInt(st.nextToken());
+			char direc =st.nextToken().charAt(0);
 
-    static int N;
-    static int[][] board;
-    static Deque<int[]> snake = new LinkedList<>();  // 양쪽 끝에서 삽입과 삭제가 모두 가능한 자료구조
-    static Map<Integer, Character> dirChange = new HashMap<>();
-
-    // 방향: 0=오른쪽, 1=아래, 2=왼쪽, 3=위
-    static int[] dx = {0, 1, 0, -1};
-    static int[] dy = {1, 0, -1, 0};
-
-    public static void main(String[] args) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st;
-        
-        N = Integer.parseInt(br.readLine());
-
-        board = new int[N][N];
-
-        int K = Integer.parseInt(br.readLine());
-        for (int i = 0; i < K; i++) {
-            st = new StringTokenizer(br.readLine());
-            int x = Integer.parseInt(st.nextToken()) - 1;
-            int y = Integer.parseInt(st.nextToken()) - 1;
-            board[x][y] = 1; // 사과
-        }
-
-        int L = Integer.parseInt(br.readLine());
-        for (int i = 0; i < L; i++) {
-            st = new StringTokenizer(br.readLine());
-            int sec = Integer.parseInt(st.nextToken());
-            char c = st.nextToken().charAt(0);
-            dirChange.put(sec, c);
-        }
-
-        System.out.println(playGame());
-    }
-
-    static int playGame() {
-        int time = 0;
-        int dir = 0;
-        int x = 0, y = 0;
-        snake.add(new int[]{x, y});
-        board[x][y] = 2; // 뱀 몸 표시
-
-        while (true) {
-            time++;
-
-            int nx = x + dx[dir];
-            int ny = y + dy[dir];
-
-            // 벽 충돌 or 자기 자신 충돌
-            if (nx < 0 || ny < 0 || nx >= N || ny >= N || board[nx][ny] == 2) {
-                break;
-            }
-
-            // 사과 있으면 -> 사과 제거, 꼬리 그대로
-            if (board[nx][ny] == 1) {
-                board[nx][ny] = 2;
-                snake.addFirst(new int[]{nx, ny});
-            }
-            // 사과 없으면 -> 꼬리 이동
-            else {
-                board[nx][ny] = 2;
-                snake.addFirst(new int[]{nx, ny});
-                int[] tail = snake.removeLast();
-                board[tail[0]][tail[1]] = 0;
-            }
-
-            // 방향 전환 체크
-            if (dirChange.containsKey(time)) {
-                char c = dirChange.get(time);
-                if (c == 'L') {
-                    dir = (dir + 3) % 4;
-                } else if (c == 'D') {
-                    dir = (dir + 1) % 4;
-                }
-            }
-
-            x = nx;
-            y = ny;
-        }
-
-        return time;
-    }
+			directionList[second] = direc;
+			
+		}
+		
+		//
+		
+		dq.add(new int[] {0,0});
+		sol(0);
+		System.out.println(ans);
+		
+		
+	}
+	public static void sol(int sec) {
+		if(directionList[sec] =='L') {
+			dIdx= (dIdx+3)%4;//방향전환
+		}
+		if(directionList[sec] =='D') {
+			dIdx= (dIdx+5)%4;//방향전환
+		}
+		int ret = canGo();
+		if(ret == -1 || ret == 2) { //못갈때
+			ans =sec+1;
+			return;
+		}
+		else {
+			sol(sec+1);
+		}
+	}
+	public static int canGo(){
+		int[] tempHead = dq.getFirst();
+		int next=-1;
+		int nextX= tempHead[0]+dx[dIdx];
+		int nextY=tempHead[1]+dy[dIdx];
+		if(nextX>=0 && nextY>=0 &&nextX<N && nextY<N) {
+			if(map[nextX][nextY]==1) {//사과일경우 꼬리는그대로 두고머리만 한칸전진
+				dq.addFirst(new int[] {nextX,nextY});
+				map[nextX][nextY]= 2;//뱀으로변경
+				next = 1;
+			}
+			else if(map[nextX][nextY]==2) {//뱀일경우 못감
+				next = 2;
+			}
+			else { //아무것도아닌경우
+				dq.addFirst(new int[] {nextX,nextY});
+				int tempTail[] = dq.pollLast();//꼬리제거 꼬리부분 0으로 바꿔줘야함
+				map[tempTail[0]][tempTail[1]]=0;
+				map[nextX][nextY]= 2;//뱀으로변경
+				next = 0;
+			}
+			
+		}
+		else {
+			next = -1; //맵나감
+		}
+		
+		return next;
+		
+	}
 }
