@@ -24,7 +24,6 @@ public class Main {
 			int[][] dp = new int[3][N];
 			dp[0][0] = sticker[0][0];
 			dp[1][0] = sticker[1][0];
-			Arrays.fill(dp[2], 0);
 		
 			for (int i = 1; i < N; i++) {
 				dp[0][i] = Math.max(dp[1][i-1], dp[2][i-1]) + sticker[0][i];
