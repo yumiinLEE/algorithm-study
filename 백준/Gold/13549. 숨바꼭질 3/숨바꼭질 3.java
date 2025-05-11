@@ -3,8 +3,8 @@ import java.util.*;
 
 public class Main {
     static class Node implements Comparable<Node> {
-        int pos;
-        int time;
+        int pos; // 위치
+        int time; // 해당 위치에 도달하는 데 걸린 시간
 
         Node(int pos, int time) {
             this.pos = pos;
@@ -13,7 +13,7 @@ public class Main {
 
         @Override
         public int compareTo(Node o) {
-            return Integer.compare(this.time, o.time);
+            return this.time-o.time; // 시간 기준으로 오름차순 정렬
         }
     }
             
@@ -28,14 +28,16 @@ public class Main {
 
         int[] dist = new int[MAX];
         Arrays.fill(dist, Integer.MAX_VALUE);
-        dist[N] = 0;
+        dist[N] = 0; // 시작 위치인 N은 0초
 
         PriorityQueue<Node> pq = new PriorityQueue<>();
         pq.offer(new Node(N, 0));
 
+        // 우선순위 큐를 이용한 다익스트라 알고리즘
         while (!pq.isEmpty()) {
             Node now = pq.poll();
 
+            // 현재 위치까지의 시간이 이미 기록된 시간보다 길다면, 해당 노드는 건너뛰기
             if (dist[now.pos] < now.time) continue;
 
             // 순간이동 (0초)
@@ -44,13 +46,13 @@ public class Main {
                 pq.offer(new Node(now.pos * 2, now.time));
             }
 
-            // 걷기 -1
+            // 걷기 -1 (1초)
             if (now.pos - 1 >= 0 && dist[now.pos - 1] > now.time + 1) {
                 dist[now.pos - 1] = now.time + 1;
                 pq.offer(new Node(now.pos - 1, now.time + 1));
             }
 
-            // 걷기 +1
+            // 걷기 +1 (1초)
             if (now.pos + 1 < MAX && dist[now.pos + 1] > now.time + 1) {
                 dist[now.pos + 1] = now.time + 1;
                 pq.offer(new Node(now.pos + 1, now.time + 1));
