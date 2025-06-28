@@ -12,7 +12,7 @@ https://swexpertacademy.com/main/code/problem/problemDetail.do?contestProbId=AXR
 */
 
 
-public class Solution {
+public class SWEA_D3_10726 {
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         int T = Integer.parseInt(br.readLine());
